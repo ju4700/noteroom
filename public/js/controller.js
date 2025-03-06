@@ -410,278 +410,266 @@ const manageNotes = {
     },
 
     addNote: function ({ noteData, contentData, ownerData, interactionData, extras }) {
-        let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
-        let feedContainer = document.querySelector('.feed-container')
-
+        let existingUNote = document.querySelector(`#note-${noteData.noteID}`);
+        let feedContainer = document.querySelector('.feed-container');
+      
         //FIXME: there should be a skeleton loader for the note card or for the note image
         if (!existingUNote) {
-            let noteCardHtml = `
-                <div class="feed-note-card" id="note-${noteData.noteID}" data-posttype="${extras.quickPost ? 'quick-post' : 'note'}">
-                    <div class="fnc__first-row">
-                        <div class="fnc__fr-author-img-wrapper">
-                            <img src="${ownerData.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${ownerData.ownerUserName}'"/>
+          let noteCardHtml = `
+            <div class="feed-note-card" id="note-${noteData.noteID}" data-posttype="${extras.quickPost ? 'quick-post' : 'note'}">
+              <div class="fnc__first-row">
+                <div class="fnc__fr-header-row">
+                  <div class="fnc__fr-author-img-wrapper">
+                    <img src="${ownerData.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${ownerData.ownerUserName}'"/>
+                  </div>
+                  <div class="fnc__fr-note-info-wrapper">
+                    <div class="note-info-wrapper--first-row">
+                      <div class="niw--fr-first-col">
+                        <div class="niw--fr-first-col-fr">
+                          <a class="author-prfl-link" href="/user/${ownerData.ownerUserName}">${ownerData.ownerDisplayName}</a>
+                          ${!ownerData.isOwner ? `
+                            <span class="niw--fr-first-col-fr-seperator"></span>
+                            <span 
+                              class="db-note-card-request-option" 
+                              data-req-pfp="${ownerData.profile_pic}" 
+                              data-req-dn="${ownerData.ownerDisplayName}" 
+                              data-req-un="${ownerData.ownerUserName}"
+                            >Request</span>
+                          ` : ``}
+                          <div class="pinned-wrapper">
+                            ${extras.pinned ? `
+                              <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM14.1096 8.41878L15.592 9.90258C16.598 10.9095 17.1009 11.413 16.9836 11.9557C16.8662 12.4985 16.2003 12.7487 14.8684 13.2491L13.9463 13.5955C13.5896 13.7295 13.4113 13.7965 13.2736 13.9157C13.2134 13.9679 13.1594 14.027 13.1129 14.0918C13.0068 14.2397 12.9562 14.4236 12.855 14.7913C12.6249 15.6276 12.5099 16.0457 12.2359 16.202C12.1205 16.2679 11.9898 16.3025 11.8569 16.3023C11.5416 16.3018 11.2352 15.9951 10.6225 15.3818L10.1497 14.9086L8.531 16.5299C8.23835 16.823 7.76348 16.8234 7.47034 16.5308C7.17721 16.2381 7.17683 15.7632 7.46948 15.4701L9.08892 13.848C9.08871 13.8482 9.08914 13.8478 9.08892 13.848L8.64262 13.4C8.03373 12.7905 7.72929 12.4858 7.72731 12.1723C7.72645 12.0368 7.76164 11.9035 7.82926 11.786C7.98568 11.5145 8.40079 11.4 9.23097 11.1711C9.5993 11.0696 9.78346 11.0188 9.9315 10.9123C9.99792 10.8644 10.0583 10.8088 10.1114 10.7465C10.2298 10.6076 10.2956 10.4281 10.4271 10.069L10.7611 9.15753C11.2545 7.81078 11.5013 7.1374 12.0455 7.01734C12.5896 6.89728 13.0963 7.40445 14.1096 8.41878Z" fill="#1C274C"/>
+                              </svg>
+                            ` : ``}
+                          </div>
                         </div>
-                        <div class="fnc__fr-note-info-wrapper">
-                            <div class="note-info-wrapper--first-row">
-                                <div class="niw--fr-first-col">
-                                <div class="niw--fr-first-col-fr">
-                                <a class="author-prfl-link" href="/user/${ownerData.ownerUserName}">${ownerData.ownerDisplayName}</a>
-                                ${!ownerData.isOwner ? `
-                                        <span class="niw--fr-first-col-fr-seperator"></span>
-                                        <span 
-                                            class="db-note-card-request-option" 
-                                            data-req-pfp="${ownerData.profile_pic}" 
-                                            data-req-dn="${ownerData.ownerDisplayName}" 
-                                            data-req-un="${ownerData.ownerUserName}"
-                                        >Request</span>
-                                ` : ``}
-                                <div class="pinned-wrapper">
-                                    ${extras.pinned ? `
-                                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM14.1096 8.41878L15.592 9.90258C16.598 10.9095 17.1009 11.413 16.9836 11.9557C16.8662 12.4985 16.2003 12.7487 14.8684 13.2491L13.9463 13.5955C13.5896 13.7295 13.4113 13.7965 13.2736 13.9157C13.2134 13.9679 13.1594 14.027 13.1129 14.0918C13.0068 14.2397 12.9562 14.4236 12.855 14.7913C12.6249 15.6276 12.5099 16.0457 12.2359 16.202C12.1205 16.2679 11.9898 16.3025 11.8569 16.3023C11.5416 16.3018 11.2352 15.9951 10.6225 15.3818L10.1497 14.9086L8.531 16.5299C8.23835 16.823 7.76348 16.8234 7.47034 16.5308C7.17721 16.2381 7.17683 15.7632 7.46948 15.4701L9.08892 13.848C9.08871 13.8482 9.08914 13.8478 9.08892 13.848L8.64262 13.4C8.03373 12.7905 7.72929 12.4858 7.72731 12.1723C7.72645 12.0368 7.76164 11.9035 7.82926 11.786C7.98568 11.5145 8.40079 11.4 9.23097 11.1711C9.5993 11.0696 9.78346 11.0188 9.9315 10.9123C9.99792 10.8644 10.0583 10.8088 10.1114 10.7465C10.2298 10.6076 10.2956 10.4281 10.4271 10.069L10.7611 9.15753C11.2545 7.81078 11.5013 7.1374 12.0455 7.01734C12.5896 6.89728 13.0963 7.40445 14.1096 8.41878Z" fill="#1C274C"/>
-                                        </svg>
-                                    ` : ``}
-                                </div>
-                                </div>
-                            <span class="niw--fr-first-col-note-pub-date">${(new Date(noteData.createdAt)).toDateString()}</span>
+                        <span class="niw--fr-first-col-note-pub-date">${(new Date(noteData.createdAt)).toDateString()}</span>
+                      </div>
+                      <div class="note-menu">
+                        <button class="note-menu-btn">
+                          <svg width="25" height="105" class="note-menu-eclipse-icon" viewBox="0 0 25 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="25" height="25" rx="12.5" fill="black"/>
+                            <rect y="40" width="25" height="25" rx="12.5" fill="black"/>
+                            <rect y="80" width="25" height="25" rx="12.5" fill="black"/>
+                          </svg>
+                        </button>
+                        <div class="menu-options">   
+                          ${!extras.quickPost ? `
+                            <div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${interactionData.isSaved}">
+                              <button class="${interactionData.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
+                                <svg class="bookmark-fill-white" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M0.619048 96C0.619048 96.1528 0.710359 96.2908 0.850996 96.3506C0.991633 96.4104 1.15437 96.3803 1.26439 96.2743L32.2955 66.3606C32.7036 65.9672 33.2964 65.9672 33.7045 66.3606L64.7356 96.2743C64.8456 96.3803 65.0084 96.4104 65.149 96.3506C65.2896 96.2908 65.381 96.1528 65.381 96V4.27586C65.381 2.2943 63.924 0.619048 62.0462 0.619048H3.95385C2.07596 0.619048 0.619048 2.2943 0.619048 4.27586V96ZM3.95385 3.56486H62.0462C62.3434 3.56486 62.6498 3.84515 62.6498 4.27586V90.3117L35.5252 64.1638C34.0811 62.7717 31.9189 62.7717 30.4748 64.1638L3.35018 90.3117V4.27586C3.35018 3.84515 3.65658 3.56486 3.95385 3.56486Z" fill="black" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
+                                </svg>
+                                <svg class="bookmark-fill-black" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M0 3C0 1.34314 1.34315 0 3 0H63C64.6569 0 66 1.34315 66 3V93.9494C66 96.5944 62.8256 97.9451 60.9198 96.111L35.0802 71.2442C33.9187 70.1264 32.0813 70.1264 30.9198 71.2442L5.08024 96.111C3.17437 97.9451 0 96.5944 0 93.9494V3Z" fill="black"/>
+                                </svg>
+                              </button>
+                              <span class="opt-label">Save Note</span>
                             </div>
-
-                            <div class="niw--fr-second-col">
-                                <div class="note-menu">
-                                    <button class="note-menu-btn">
-                                        <svg width="25" height="105" class="note-menu-eclipse-icon" viewBox="0 0 25 105" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="25" height="25" rx="12.5" fill="black"/>
-                                            <rect y="40" width="25" height="25" rx="12.5" fill="black"/>
-                                            <rect y="80" width="25" height="25" rx="12.5" fill="black"/>
-                                        </svg>
-                                    </button>
-                                    <div class="menu-options">   
-                                        ${!extras.quickPost ? `
-                                            <div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${interactionData.isSaved}">
-                                                <button class="${interactionData.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
-                                                    <svg class="bookmark-fill-white" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M0.619048 96C0.619048 96.1528 0.710359 96.2908 0.850996 96.3506C0.991633 96.4104 1.15437 96.3803 1.26439 96.2743L32.2955 66.3606C32.7036 65.9672 33.2964 65.9672 33.7045 66.3606L64.7356 96.2743C64.8456 96.3803 65.0084 96.4104 65.149 96.3506C65.2896 96.2908 65.381 96.1528 65.381 96V4.27586C65.381 2.2943 63.924 0.619048 62.0462 0.619048H3.95385C2.07596 0.619048 0.619048 2.2943 0.619048 4.27586V96ZM3.95385 3.56486H62.0462C62.3434 3.56486 62.6498 3.84515 62.6498 4.27586V90.3117L35.5252 64.1638C34.0811 62.7717 31.9189 62.7717 30.4748 64.1638L3.35018 90.3117V4.27586C3.35018 3.84515 3.65658 3.56486 3.95385 3.56486Z" fill="black" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
-                                                    </svg>
-                                                    <svg class="bookmark-fill-black" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M0 3C0 1.34314 1.34315 0 3 0H63C64.6569 0 66 1.34315 66 3V93.9494C66 96.5944 62.8256 97.9451 60.9198 96.111L35.0802 71.2442C33.9187 70.1264 32.0813 70.1264 30.9198 71.2442L5.08024 96.111C3.17437 97.9451 0 96.5944 0 93.9494V3Z" fill="black"/>
-                                                    </svg>
-                                                </button>
-                                                <span class="opt-label">Save Note</span>
-                                            </div>
-
-
-                                            <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
-                                                    <svg
-                                                        class="download-icon"
-                                                        width="40"
-                                                        height="40"
-                                                        viewBox="0 0 43 43"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                    <path
-                                                        d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
-                                                        stroke="#1E1E1E"
-                                                        stroke-width="2.29523"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                    />
-                                                </svg>
-                                                <span class="opt-label">Download</span>
-                                            </div>
-                                        ` : ``} 
-
-                                        <div class="option" onclick="setupShareModal(this, '${extras.quickPost}')" data-noteid="${noteData.noteID}" data-notetitle="${noteData.noteTitle}">
-                                            <svg
-                                                class="share-icon"
-                                                width="40"
-                                                height="40"
-                                                viewBox="0 0 46 46"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
-                                                    fill="#1D1B20"
-                                                />
-                                            </svg>
-                                            <span class="opt-label">Share</span>
-                                        </div>
-                                        ${isAdmin ? `
-                                            <div class="option" onclick="pinUnpinPost(this)" data-noteid="${noteData.noteID}" data-ispinned="${extras.pinned}">
-                                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM14.1096 8.41878L15.592 9.90258C16.598 10.9095 17.1009 11.413 16.9836 11.9557C16.8662 12.4985 16.2003 12.7487 14.8684 13.2491L13.9463 13.5955C13.5896 13.7295 13.4113 13.7965 13.2736 13.9157C13.2134 13.9679 13.1594 14.027 13.1129 14.0918C13.0068 14.2397 12.9562 14.4236 12.855 14.7913C12.6249 15.6276 12.5099 16.0457 12.2359 16.202C12.1205 16.2679 11.9898 16.3025 11.8569 16.3023C11.5416 16.3018 11.2352 15.9951 10.6225 15.3818L10.1497 14.9086L8.531 16.5299C8.23835 16.823 7.76348 16.8234 7.47034 16.5308C7.17721 16.2381 7.17683 15.7632 7.46948 15.4701L9.08892 13.848C9.08871 13.8482 9.08914 13.8478 9.08892 13.848L8.64262 13.4C8.03373 12.7905 7.72929 12.4858 7.72731 12.1723C7.72645 12.0368 7.76164 11.9035 7.82926 11.786C7.98568 11.5145 8.40079 11.4 9.23097 11.1711C9.5993 11.0696 9.78346 11.0188 9.9315 10.9123C9.99792 10.8644 10.0583 10.8088 10.1114 10.7465C10.2298 10.6076 10.2956 10.4281 10.4271 10.069L10.7611 9.15753C11.2545 7.81078 11.5013 7.1374 12.0455 7.01734C12.5896 6.89728 13.0963 7.40445 14.1096 8.41878Z" fill="#1C274C"/>
-                                                </svg>
-                                                <span class="opt-label">Pin/Unpin Post</span>
-                                            </div>
-                                        ` : ``}
-                                    </div>
-                                </div>
+      
+                            <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
+                              <svg
+                                class="download-icon"
+                                width="40"
+                                height="40"
+                                viewBox="0 0 43 43"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
+                                  stroke="#1E1E1E"
+                                  stroke-width="2.29523"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                              <span class="opt-label">Download</span>
                             </div>
-                        </div>
-
-                        
-                        <div class="note-info-wrapper--second-row">
-                            <p class="fnc--note-desc">
-                                ${
-                                    (function() {
-                                        let description = (new DOMParser()).parseFromString(noteData.description, 'text/html').querySelector('body').textContent.trim()
-                                        let charLimit = extras.quickPost ? 250 : 100;
-                                        return description.length > charLimit ? `
-                                            ${description.slice(0, charLimit)}...
-                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}'">Read More</span>
-                                        ` : description;
-                                    })()
-                                }
-                            </p>
-                        </div>
-                        </div>
-                    </div>
-
-
-                    <div class="fnc__second-row">
-                        ${extras.quickPost ?
-                            `${contentData.contentCount !== 0 ?
-                                `<div class="quickpost-thumbnail-wrapper">
-                                    <img onclick="window.location.href='/view/quick-post/${noteData.noteID}'" class="quickpost-thumbnail" src="" data-src="${contentData.content1}"/>
-                                </div>`: ``} `
-                            :
-                            `<div class="thumbnail-grid">
-                                <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content1}'/>
-                                <div class="thumbnail-secondary-wrapper">
-                                    <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content2}'/>
-                                    ${contentData.contentCount > 2 ?
-                                        `<div class="thumbnail-overlay" onclick="window.location.href='/view/${noteData.noteID}'">+${parseInt(contentData.contentCount) - 2}</div>` : ''
-                                    }
-                                </div>
-                            </div>`
-                        }
-                    </div>
-
-                    <div class="fnc__third-row">
-                            <div class="fnc__tr--note-engagement-metrics">
-                                <div class="love-react-metric-wrapper">
-                                    <svg 
-                                        class="love-react-icon-static" 
-                                        width="30" 
-                                        height="27" 
-                                        viewBox="0 0 30 27" 
-                                        fill="none" 
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
-                                            fill="url(#paint0_linear_4170_1047)"
-                                        />
-                                        <defs>
-                                            <linearGradient
-                                                id="paint0_linear_4170_1047"
-                                                x1="-53.407"
-                                                y1="-16.9324"
-                                                x2="14.9989"
-                                                y2="40.0465"
-                                                gradientUnits="userSpaceOnUse"
-                                            >
-                                            <stop stop-color="#04DBF7" />
-                                            <stop offset="1" stop-color="#FF0000" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                    <span class="love-react-metric-count metric-count-font uv-count">${interactionData.upvoteCount}</span>
-                                </div>
-
-                                <div class="review-metric-wrapper">
-                                    <span
-                                        class="review-count metric-count-font cmnt-count"
-                                        onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : `${noteData.noteID}`}/#feedbacks'"
-                                    >
-                                        ${interactionData.feedbackCount === 0 ? `No reviews yet` : `${interactionData.feedbackCount} Review${interactionData.feedbackCount === 1 ? "" : "s"}`}
-                                    </span>
-                                </div>
-                                </div>
-
-                                <!-- First Row of Third FNC row -->
-                                <div class="note-engagement">
-                                <div
-                                    class="uv-container"
-                                    id="upvote-container"
-                                    data-isupvoted="${interactionData.isUpvoted}"
-                                    data-noteid="${noteData.noteID}"
-                                    onclick="upvote(this, true)"
-                                >
-                                    <svg
-                                        class="uv-icon"
-                                        width="18"
-                                        height="19"
-                                        viewBox="0 0 22 23"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                    ${interactionData.isUpvoted ?
-                                        `<path
-                                            d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
-                                            fill="url(#paint0_linear_4170_1047)"
-                                        />
-                                        <defs>
-                                        <linearGradient
-                                            id="paint0_linear_4170_1047"
-                                            x1="-53.407"
-                                            y1="-16.9324"
-                                            x2="14.9989"
-                                            y2="40.0465"
-                                            gradientUnits="userSpaceOnUse"
-                                        >
-                                            <stop stop-color="#04DBF7" />
-                                            <stop offset="1" stop-color="#FF0000" />
-                                        </linearGradient>
-                                        </defs>`
-                                            :
-                                        `<path
-                                            d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
-                                            stroke="#1E1E1E"
-                                            stroke-width="0.909091"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                        />`
-                                    }
-                                    </svg>
-                                    <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
-                                </div>
-
-                                <div
-                                    class="cmnt-engagement"
-                                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
-                                >
-                                    <svg
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
-                                    class="comment-icon"
-                                    >
-                                    <path
-                                        d="M23.25 15.75C23.25 16.413 22.9866 17.0489 22.5178 17.5178C22.0489 17.9866 21.413 18.25 20.75 18.25H5.75L0.75 23.25V3.25C0.75 2.58696 1.01339 1.95107 1.48223 1.48223C1.95107 1.01339 2.58696 0.75 3.25 0.75H20.75C21.413 0.75 22.0489 1.01339 22.5178 1.48223C22.9866 1.95107 23.25 2.58696 23.25 3.25V15.75Z"
-                                        stroke="#1E1E1E"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    />
-                                    </svg>
-                                    <span class="fnc__tr--icon-label">Review</span>
-                                </div>
-                                </div>
+                          ` : ``}
+      
+                          <div class="option" onclick="setupShareModal(this, '${extras.quickPost}')" data-noteid="${noteData.noteID}" data-notetitle="${noteData.noteTitle}">
+                            <svg
+                              class="share-icon"
+                              width="40"
+                              height="40"
+                              viewBox="0 0 46 46"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
+                                fill="#1D1B20"
+                              />
+                            </svg>
+                            <span class="opt-label">Share</span>
+                          </div>
+                          ${isAdmin ? `
+                            <div class="option" onclick="pinUnpinPost(this)" data-noteid="${noteData.noteID}" data-ispinned="${extras.pinned}">
+                              <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM14.1096 8.41878L15.592 9.90258C16.598 10.9095 17.1009 11.413 16.9836 11.9557C16.8662 12.4985 16.2003 12.7487 14.8684 13.2491L13.9463 13.5955C13.5896 13.7295 13.4113 13.7965 13.2736 13.9157C13.2134 13.9679 13.1594 14.027 13.1129 14.0918C13.0068 14.2397 12.9562 14.4236 12.855 14.7913C12.6249 15.6276 12.5099 16.0457 12.2359 16.202C12.1205 16.2679 11.9898 16.3025 11.8569 16.3023C11.5416 16.3018 11.2352 15.9951 10.6225 15.3818L10.1497 14.9086L8.531 16.5299C8.23835 16.823 7.76348 16.8234 7.47034 16.5308C7.17721 16.2381 7.17683 15.7632 7.46948 15.4701L9.08892 13.848C9.08871 13.8482 9.08914 13.8478 9.08892 13.848L8.64262 13.4C8.03373 12.7905 7.72929 12.4858 7.72731 12.1723C7.72645 12.0368 7.76164 11.9035 7.82926 11.786C7.98568 11.5145 8.40079 11.4 9.23097 11.1711C9.5993 11.0696 9.78346 11.0188 9.9315 10.9123C9.99792 10.8644 10.0583 10.8088 10.1114 10.7465C10.2298 10.6076 10.2956 10.4281 10.4271 10.069L10.7611 9.15753C11.2545 7.81078 11.5013 7.1374 12.0455 7.01734C12.5896 6.89728 13.0963 7.40445 14.1096 8.41878Z" fill="#1C274C"/>
+                              </svg>
+                              <span class="opt-label">Pin/Unpin Post</span>
                             </div>
+                          ` : ``}
+                        </div>
+                      </div>
                     </div>
-                </div> <br>
-            `
-
-            feedContainer.insertAdjacentHTML('beforeend', noteCardHtml);
-
-            let newNoteCard = document.querySelector(`#note-${noteData.noteID}`)
-            observers.observer().observe(newNoteCard)
+                  </div>
+                </div>
+              </div>
+              <div class="note-info-wrapper--second-row">
+                <p class="fnc--note-desc">
+                  ${
+                    (function() {
+                      let description = (new DOMParser()).parseFromString(noteData.description, 'text/html').querySelector('body').textContent.trim();
+                      let charLimit = extras.quickPost ? 250 : 100;
+                      return description.length > charLimit ? `
+                        ${description.slice(0, charLimit)}...
+                        <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}'">Read More</span>
+                      ` : description;
+                    })()
+                  }
+                </p>
+              </div>
+              <div class="fnc__second-row">
+                ${extras.quickPost ?
+                  `${contentData.contentCount !== 0 ?
+                    `<div class="quickpost-thumbnail-wrapper">
+                      <img onclick="window.location.href='/view/quick-post/${noteData.noteID}'" class="quickpost-thumbnail" src="" data-src="${contentData.content1}"/>
+                    </div>` : ``} `
+                  :
+                  `<div class="thumbnail-grid">
+                    <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content1}'/>
+                    <div class="thumbnail-secondary-wrapper">
+                      <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content2}'/>
+                      ${contentData.contentCount > 2 ?
+                        `<div class="thumbnail-overlay" onclick="window.location.href='/view/${noteData.noteID}'">+${parseInt(contentData.contentCount) - 2}</div>` : ''
+                      }
+                    </div>
+                  </div>`
+                }
+              </div>
+              <div class="fnc__third-row">
+                <div class="fnc__tr--note-engagement-metrics">
+                  <div class="love-react-metric-wrapper">
+                    <svg 
+                      class="love-react-icon-static" 
+                      width="30" 
+                      height="27" 
+                      viewBox="0 0 30 27" 
+                      fill="none" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
+                        fill="url(#paint0_linear_4170_1047)"
+                      />
+                      <defs>
+                        <linearGradient
+                          id="paint0_linear_4170_1047"
+                          x1="-53.407"
+                          y1="-16.9324"
+                          x2="14.9989"
+                          y2="40.0465"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop stop-color="#04DBF7" />
+                          <stop offset="1" stop-color="#FF0000" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <span class="love-react-metric-count metric-count-font uv-count">${interactionData.upvoteCount}</span>
+                  </div>
+                  <div class="review-metric-wrapper">
+                    <span
+                      class="review-count metric-count-font cmnt-count"
+                      onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : `${noteData.noteID}`}/#feedbacks'"
+                    >
+                      ${interactionData.feedbackCount === 0 ? `No reviews yet` : `${interactionData.feedbackCount} Review${interactionData.feedbackCount === 1 ? "" : "s"}`}
+                    </span>
+                  </div>
+                </div>
+                <div class="note-engagement">
+                  <div
+                    class="uv-container"
+                    id="upvote-container"
+                    data-isupvoted="${interactionData.isUpvoted}"
+                    data-noteid="${noteData.noteID}"
+                    onclick="upvote(this, true)"
+                  >
+                    <svg
+                      class="uv-icon"
+                      width="18"
+                      height="19"
+                      viewBox="0 0 22 23"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      ${interactionData.isUpvoted ?
+                        `<path
+                          d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
+                          fill="url(#paint0_linear_4170_1047)"
+                        />
+                        <defs>
+                          <linearGradient
+                            id="paint0_linear_4170_1047"
+                            x1="-53.407"
+                            y1="-16.9324"
+                            x2="14.9989"
+                            y2="40.0465"
+                            gradientUnits="userSpaceOnUse"
+                          >
+                            <stop stop-color="#04DBF7" />
+                            <stop offset="1" stop-color="#FF0000" />
+                          </linearGradient>
+                        </defs>`
+                        :
+                        `<path
+                          d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
+                          stroke="#1E1E1E"
+                          stroke-width="0.909091"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />`
+                      }
+                    </svg>
+                    <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
+                  </div>
+                  <div
+                    class="cmnt-engagement"
+                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
+                      class="comment-icon"
+                    >
+                      <path
+                        d="M23.25 15.75C23.25 16.413 22.9866 17.0489 22.5178 17.5178C22.0489 17.9866 21.413 18.25 20.75 18.25H5.75L0.75 23.25V3.25C0.75 2.58696 1.01339 1.95107 1.48223 1.48223C1.95107 1.01339 2.58696 0.75 3.25 0.75H20.75C21.413 0.75 22.0489 1.01339 22.5178 1.48223C22.9866 1.95107 23.25 2.58696 23.25 3.25V15.75Z"
+                        stroke="#1E1E1E"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span class="fnc__tr--icon-label">Review</span>
+                  </div>
+                </div>
+              </div>
+            </div> <br>
+          `;
+      
+          feedContainer.insertAdjacentHTML('beforeend', noteCardHtml);
+      
+          let newNoteCard = document.querySelector(`#note-${noteData.noteID}`);
+          observers.observer().observe(newNoteCard);
         }
-    },
+      },
     addSaveNote: function (noteData) {
         let savedNotesContainer = document.querySelector(".saved-notes-container");
         let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
