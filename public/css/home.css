@@ -395,7 +395,7 @@ body {
 
 .grad-highlight-txt{
   font-family: 'Josefin Sans';
-  font-weight: 400;
+  font-weight: 800;
   text-align: center;
   background: linear-gradient(90.24deg, #04DBF7 8.3%, #4000FF 233.61%);
   background-clip: text;
